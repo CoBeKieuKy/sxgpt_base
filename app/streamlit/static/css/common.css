@@ -1,0 +1,37 @@
+div[data-testid="stToolbar"] {
+visibility: hidden;
+height: 0%;
+position: fixed;
+}
+div[data-testid="stDecoration"] {
+    display: none;
+    # visibility: hidden;
+    # height: 0%;
+    # position: fixed;
+}
+div[data-testid="stStatusWidget"] {
+visibility: hidden;
+height: 0%;
+position: fixed;
+}
+#MainMenu {
+visibility: visible;
+height: 0%;
+}
+header {
+visibility: hidden;
+height: 0%;
+}
+footer {
+visibility: hidden;
+height: 0%;
+}
+.reportview-container .sidebar-content {
+    padding-top: 0rem;
+}
+.appview-container .main .block-container{
+    padding-top: 1rem;
+    padding-right: 5rem;
+    padding-left: 5rem;
+    padding-bottom: 0rem;
+}

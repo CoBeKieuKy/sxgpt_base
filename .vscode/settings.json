@@ -1,0 +1,6 @@
+{
+    "pylint.args": [
+        "--disable=C0103,C0301",
+        "--generated-members=streamlit.*,st.*"
+    ]
+}

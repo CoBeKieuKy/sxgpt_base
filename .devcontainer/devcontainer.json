@@ -1,0 +1,85 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/python
+{
+    "name": "LLMDemo",
+    "build": {
+        // Path is relative to the devcontainer.json file.
+        "dockerfile": "../Dockerfile",
+        "target": "develop",
+        "args": {
+            "USERNAME": "vscode",
+            "USER_UID": "1000",
+            "USER_GID": "1000"
+            // "_GOOGLE_CLIENT_ID": "${GOOGLE_CLIENT_ID}",
+            // "_GOOGLE_CLIENT_SECRET": "${GOOGLE_CLIENT_SECRET}",
+            // "_OPENAI_API_KEY": "${OPENAI_API_KEY}",
+            // "_AZURE_API_BASE": "${AZURE_API_BASE}",
+            // "_AZURE_API_KEY1": "${AZURE_API_KEY1}",
+            // "_AZURE_API_KEY2": "${AZURE_API_KEY2}"
+        }
+    },
+    // "containerEnv": {
+    //     "GOOGLE_CLIENT_ID": "${GOOGLE_CLIENT_ID}",
+    //     "GOOGLE_CLIENT_SECRET": "${GOOGLE_CLIENT_SECRET}",
+        // "AZURE_API_BASE": "${localEnv:AZURE_API_BASE}",
+        // "AZURE_API_KEY1": "${localEnv:AZURE_API_KEY1}",
+        // "AZURE_API_KEY2": "${localEnv:AZURE_API_KEY2}"
+    // },
+    "runArgs": ["--env-file","${localWorkspaceFolder}/.env"],
+    "forwardPorts": [8080],
+    "initializeCommand": "if [ ! -f ${localWorkspaceFolder}/.env ]; then touch ${localWorkspaceFolder}/.env; fi",
+    "postStartCommand": "cd /workspaces/LLMDemo && /bin/bash .devcontainer/setup.sh",
+    // "postStartCommand": "git config --global --add safe.directory ${containerWorkspaceFolder} && git update-index --assume-unchanged .env && pip3 install -e /workspaces/LLMDemo",
+    // "postAttachCommand": "cd /workspaces/LLMDemo/app/streamlit/ && streamlit run main.py --server.port 8080 --browser.gatherUsageStats false",
+    "remoteUser": "vscode",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "VisualStudioExptTeam.vscodeintellicode",
+                "VisualStudioExptTeam.intellicode-api-usage-examples",
+                "ms-vscode.live-server",
+                "ms-python.python",
+                "ms-python.pylint",
+                "ms-python.vscode-pylance",
+                "ms-python.isort",
+                "ms-python.black-formatter",
+                "ms-python.flake8",
+                "GrapeCity.gc-excelviewer",
+                "mhutchie.git-graph",
+                "oderwat.indent-rainbow",
+                "ms-toolsai.jupyter",
+                "ms-toolsai.vscode-jupyter-cell-tags",
+                "ms-toolsai.jupyter-renderers",
+                "ms-toolsai.vscode-jupyter-powertoys",
+                "ms-toolsai.vscode-jupyter-slideshow",
+                "christian-kohler.path-intellisense",
+                "donjayamanne.githistory",
+                "bierner.markdown-mermaid",
+                "esbenp.prettier-vscode",
+                "yy0931.vscode-sqlite3-editor"
+            ]
+        },
+        "settings": {
+            "python.defaultInterpreterPath": "/workspaces/LLMDemo/.venv/bin/python",
+            "python.venvFolders": ["/workspaces/LLMDemo/.venv"],
+            "python.terminal.activateEnvironment": true,
+            "[python]": {
+                "editor.defaultFormatter": "ms-python.black-formatter",
+                "editor.formatOnSave": true,
+                "editor.codeActionsOnSave": {
+                    "source.organizeImports": "always"
+                },
+                "black-formatter.args": ["--line-length=80"],
+                "flake8.args": [
+                    "--max-line-length=80",
+                    "--ignore=E203,W503,W504,E501,C0103"
+                ],
+                "isort.check": true,
+                "isort.args": ["--profile", "black"]
+            },
+            "python.testing.pytestArgs": ["tests"],
+            "python.testing.unittestEnabled": false,
+            "python.testing.pytestEnabled": true
+        }
+    }
+}

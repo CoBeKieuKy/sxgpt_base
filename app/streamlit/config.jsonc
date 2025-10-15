@@ -1,0 +1,51 @@
+{
+    // バージョン情報
+    "VERSION": "1.9.0b",
+    // デフォルト環境選択
+    "DEFUALT_ENV": "Azure",
+    // ウェルカムメッセージ
+    "WELLCOME_MESSAGE": "{hello}SX-GPTです。チャットや文章を要約をしてあなたをお手伝いします。要約したい時はプラグインを実行してファイルをアップロードしてください。\n\n2025/04/11 - モデル追加 (v1.8.4)\n\n- 選択可能なモデルに o3-miniを追加 (o1-mini-previewは削除)",
+    // システム性格設定
+    "SYSTEM_ROLE": "I'm a consultant and prefer logical answers. I live in Tokyo, Japan, and I want to know information about Japan and other countries separately. Explanation of basic knowledge may be omitted from the answer. If there are no instructions, please answer in Japanese.",
+    // 画像表示設定
+    "DISPLAY_PIC_HEIGHT": 180,
+    "DISPLAY_PIC_BACKGROUND_COLOR": [220, 220, 220],
+    // プラグイン登録
+    "PLUGINS": {
+        "main": {
+            "画像アップロード": "pictures"
+        }
+    },
+    // APIキー設定
+    "MODEL_CONFIG": {
+        "Azure": {
+            "config": {
+                "type": "azure",
+                "key": "AZURE_API_KEY1",
+                "base": "AZURE_API_BASE",
+                "version": "2025-01-01-preview",
+                "safety_factor": 0.95
+            },
+            "models": {
+                "gpt-4o": {
+                    "name": "gpt-4o",
+                    "token_limit": 100000,
+                    "max_response_token": 10000,
+                    "vision": true
+                },
+                "o1-preview": {
+                    "name": "o1-preview",
+                    "token_limit": 100000,
+                    "max_response_token": 10000,
+                    "vision": false
+                },
+                "o3-mini": {
+                    "name": "o3-mini",
+                    "token_limit": 100000,
+                    "max_response_token": 10000,
+                    "vision": false
+                }
+            }
+        }
+    }
+}

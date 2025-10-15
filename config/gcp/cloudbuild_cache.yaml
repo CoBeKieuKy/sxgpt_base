@@ -1,0 +1,34 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['pull', '${_REGION}-docker.pkg.dev/${_PROJECT_ID}/${_REPOSITORY}/${_IMAGE_NAME}:builder']
+  waitFor: ['-']
+  id: 'pull-builder'
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['pull', '${_REGION}-docker.pkg.dev/${_PROJECT_ID}/${_REPOSITORY}/${_IMAGE_NAME}:runner']
+  waitFor: ['-']
+  id: 'pull-runner'
+- name: 'gcr.io/cloud-builders/docker'
+  args: [ 'build', '--target', 'builder', 
+  '--cache-from', '${_REGION}-docker.pkg.dev/${_PROJECT_ID}/${_REPOSITORY}/${_IMAGE_NAME}:builder', '-t', 
+  '${_REGION}-docker.pkg.dev/${_PROJECT_ID}/${_REPOSITORY}/${_IMAGE_NAME}:builder', '.' ]
+  waitFor: ['pull-builder']
+  id: build-builder
+- name: 'gcr.io/cloud-builders/docker'
+  args: [ 'build', '--target', 'runner', 
+  '--cache-from', '${_REGION}-docker.pkg.dev/${_PROJECT_ID}/${_REPOSITORY}/${_IMAGE_NAME}:builder',
+  '--cache-from', '${_REGION}-docker.pkg.dev/${_PROJECT_ID}/${_REPOSITORY}/${_IMAGE_NAME}:runner', 
+  '-t', '${_REGION}-docker.pkg.dev/${_PROJECT_ID}/${_REPOSITORY}/${_IMAGE_NAME}:runner',
+  '--build-arg', '_TARGET=${_TARGET}',
+  '--build-arg', '_PLATFORM=${_PLATFORM}', 
+  '--build-arg', '_GOOGLE_CLIENT_ID=${_GOOGLE_CLIENT_ID}',
+  '--build-arg', '_GOOGLE_CLIENT_SECRET=${_GOOGLE_CLIENT_SECRET}',
+  '--build-arg', '_REDIRECT_URI=${_REDIRECT_URI}',
+  '--build-arg', '_OPENAI_API_KEY=${_OPENAI_API_KEY}',
+  '--build-arg', '_AZURE_API_BASE=${_AZURE_API_BASE}',
+  '--build-arg', '_AZURE_API_KEY1=${_AZURE_API_KEY1}',
+  '--build-arg', '_AZURE_API_KEY2=${_AZURE_API_KEY2}',
+  '.' ]
+  waitFor: ['pull-runner', 'build-builder']
+images:
+- '${_REGION}-docker.pkg.dev/${_PROJECT_ID}/${_REPOSITORY}/${_IMAGE_NAME}:builder'
+- '${_REGION}-docker.pkg.dev/${_PROJECT_ID}/${_REPOSITORY}/${_IMAGE_NAME}:runner'

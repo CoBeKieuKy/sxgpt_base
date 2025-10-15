@@ -1,0 +1,13 @@
+[ui]
+hideTopBar = true
+[server]
+enableStaticServing=true
+[browser]
+gatherUsageStats=false
+[theme]
+#backgroundColor="#262730"
+#secondaryBackgroundColor="#0E1117"
+backgroundColor="#0E1117"
+secondaryBackgroundColor="#262730"
+textColor="#BBBBBB"
+primaryColor="#EA5504"
