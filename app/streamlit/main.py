@@ -5,17 +5,14 @@ SX-GPTアプリケーションメイン
 import datetime
 
 import streamlit as st
-
 # pylint: disable=E0401,E0611
 from streamlit.components.v1 import html
 
 import app.streamlit.plugins as plugins
 from app.streamlit.utils.common import ParameterSession, hello
-from app.streamlit.utils.display import (
-    clipboard_buttom_HTML,
-    display_all_messages,
-    set_common_style,
-)
+from app.streamlit.utils.display import (clipboard_buttom_HTML,
+                                         display_all_messages,
+                                         set_common_style)
 from app.streamlit.utils.sessions import CommonSession
 from sx_agents.utils import ChatMessage, Model
 from sx_agents.utils.common import crawring_message
@@ -49,9 +46,10 @@ def display_sidebar(is_disabled, placeholder_messages, placeholder_selector):
         st.header("設定")
 
         # モデル選択
-        model_config = params.MODEL_CONFIG[session.env]
+        
         available_models = [
-            model["name"] for model in model_config["models"].values()
+            model_name for model_name, config in params.MODEL_CONFIG.items()
+            if config.get("visible", True)
         ]
         name = st.selectbox(
             "言語モデル",
@@ -59,10 +57,9 @@ def display_sidebar(is_disabled, placeholder_messages, placeholder_selector):
             disabled=is_disabled,
         )
         if name != model.name:
-            model_params = model_config["config"] | model_config["models"][name]
-            session.model = Model(**model_params)
-
-        # ポータルへのリンク
+            model_params = params.MODEL_CONFIG[name]
+            session.model = Model(name=name, **model_params)
+        # # ポータルへのリンク
         st.link_button(
             "ポータルへ戻る",
             "https://genai-portal.sxai.app/",
@@ -238,10 +235,12 @@ def index():
         # プラグイン実行用の画面
         placeholder_plugin = message_container.empty()
         module = getattr(plugins, session.status)
+
         # プラグインの実行
         module.execute(
             placeholder_plugin, session.memory, session.model, **session.kwargs
         )
+
         # プラグイン実行終了処理
         placeholder_plugin.empty()
         session.is_selector_activate = True
