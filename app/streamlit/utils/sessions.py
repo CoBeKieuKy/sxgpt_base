@@ -46,8 +46,10 @@ class CommonSession:
     def get(cls) -> Self:
         if "common" not in st.session_state:
             params = ParameterSession.get()
-            model_config = params.MODEL_CONFIG[params.DEFUALT_ENV]
-            name = list(model_config["models"].keys())[0]
+            # model_config = params.MODEL_CONFIG[params.DEFUALT_ENV]
+            # name = list(model_config["models"].keys())[0]
+            name = list(params.MODEL_CONFIG.keys())[0]
+
             session = cls(params.DEFUALT_ENV, name)
             session.set_env(params.DEFUALT_ENV)
             st.session_state["common"] = session
@@ -55,9 +57,11 @@ class CommonSession:
 
     @property
     def available_models(self) -> list[str]:
+        # params = ParameterSession.get()
+        # model_config = params.MODEL_CONFIG[self.env]
+        # return list(model_config["models"].keys())
         params = ParameterSession.get()
-        model_config = params.MODEL_CONFIG[self.env]
-        return list(model_config["models"].keys())
+        return list(params.MODEL_CONFIG.keys())
 
     @property
     def available_plugins(self) -> dict[str, list[str]]:
@@ -79,19 +83,27 @@ class CommonSession:
         return available_plugins
 
     def set_env(self, env: str):
-        params = ParameterSession.get()
-        if env not in params.MODEL_CONFIG:
-            raise ValueError(f"Invalid environment: {env}")
+        # params = ParameterSession.get()
+        # if env not in params.MODEL_CONFIG:
+        #     raise ValueError(f"Invalid environment: {env}")
+        # self.env = env
+        # self.plugins = self.available_plugins
+        # name = self.available_models[0]
+        # self.set_model(name)
+        # params = ParameterSession.get()
         self.env = env
         self.plugins = self.available_plugins
         name = self.available_models[0]
         self.set_model(name)
 
     def set_model(self, name: str):
+        # params = ParameterSession.get()
+        # model_config = params.MODEL_CONFIG[self.env]
+        # model_params = model_config["config"] | model_config["models"][name]
+        # self.model = Model(**model_params)
         params = ParameterSession.get()
-        model_config = params.MODEL_CONFIG[self.env]
-        model_params = model_config["config"] | model_config["models"][name]
-        self.model = Model(**model_params)
+        model_params = params.MODEL_CONFIG[name]
+        self.model = Model(name=name, **model_params)
 
     @classmethod
     def delete(cls) -> None:
