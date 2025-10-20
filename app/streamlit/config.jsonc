@@ -13,39 +13,75 @@
     // プラグイン登録
     "PLUGINS": {
         "main": {
-            "画像アップロード": "pictures"
+            "画像/pdf/pptアップロード": "multimodal",
+            "スプレッドシート逐次実行": "spreadsheet",
+            "ファイル文章要約": "docsummarize",
+            "コピー&ペースト要約": "textsummarize",
+            "PDF/DOC→Markdown変換": "doc_to_markdown"
+        },
+        "dev": {
+            "グラフ作成エージェント": "graph_creator_plugin",
+            "スプレッドシートバッチ実行": "spreadsheet",
+            "画像アップロード": "pictures",
+            "ファイル文章要約": "docsummarize",
+            "PDF/DOC→Markdown変換": "doc_to_markdown"
         }
     },
     // APIキー設定
     "MODEL_CONFIG": {
-        "Azure": {
-            "config": {
-                "type": "azure",
-                "key": "AZURE_API_KEY1",
-                "base": "AZURE_API_BASE",
-                "version": "2025-01-01-preview",
-                "safety_factor": 0.95
+        "gpt-4o":{
+            "type": "azure",
+            "config": {"model_name": "gpt-4o"},
+            "secret_keys": {
+                "api_key": "AZURE_API_KEY1",
+                "base_url": "AZURE_API_BASE"
             },
-            "models": {
-                "gpt-4o": {
-                    "name": "gpt-4o",
-                    "token_limit": 100000,
-                    "max_response_token": 10000,
-                    "vision": true
-                },
-                "o1-preview": {
-                    "name": "o1-preview",
-                    "token_limit": 100000,
-                    "max_response_token": 10000,
-                    "vision": false
-                },
-                "o3-mini": {
-                    "name": "o3-mini",
-                    "token_limit": 100000,
-                    "max_response_token": 10000,
-                    "vision": false
-                }
-            }
+            "vision": true,
+            "visible": true,
+            "token_limit": 8192,
+            "max_response_token": 500
+        },
+
+        "gpt-5-auto":{
+            "type": "azure",
+            "config": {"model_name": "model-router"},
+            "secret_keys": {
+                "api_key": "AZURE_API_KEY1",
+                "base_url": "AZURE_API_BASE"
+            },
+            "vision": false,
+            "visible": true,
+            "token_limit": 100000,
+            "max_response_token": 10000
+        },
+
+        "gpt-5-thinking":{
+            "type": "azure",
+            "config": {
+                "model_name": "gpt-5",
+                "reasoning_effort":"high"
+            },
+            "secret_keys": {
+                "api_key": "AZURE_API_KEY1",
+                "base_url": "AZURE_API_BASE"
+            },
+            "vision": true,
+            "visible": true,
+            "token_limit": 100000,
+            "max_response_token": 10000
+        },
+
+        "gpt-5-mini":{
+            "type": "azure",
+            "config": {"model_name": "gpt-5-mini"},
+            "secret_keys": {
+                "api_key": "AZURE_API_KEY1",
+                "base_url": "AZURE_API_BASE"
+            },
+            "vision": true,
+            "visible": false,
+            "token_limit": 100000,
+            "max_response_token": 10000
         }
     }
 }
