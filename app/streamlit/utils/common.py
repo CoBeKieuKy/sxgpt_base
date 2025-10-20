@@ -47,10 +47,7 @@ class ParameterSession:
             data["DISPLAY_PIC_BACKGROUND_COLOR"] = tuple(
                 data["DISPLAY_PIC_BACKGROUND_COLOR"]
             )
-            # MODLEL_CONFIGのkeyとbaseを環境変数から取得
-            config = data["MODEL_CONFIG"][data["DEFUALT_ENV"]]["config"]
-            config["key"] = os.getenv(config["key"])
-            config["base"] = os.getenv(config["base"])
+
             st.session_state["parameter"] = cls(**data)
         return st.session_state["parameter"]
 
