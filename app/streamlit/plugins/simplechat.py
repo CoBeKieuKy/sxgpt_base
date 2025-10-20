@@ -5,12 +5,15 @@ import traceback
 
 import streamlit as st
 
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import ChatPromptTemplate
+
 # pylint: disable=E0401,E0611
 from streamlit.delta_generator import DeltaGenerator
 
-from app.streamlit.utils.logger import logger_info, logger_error
+from app.streamlit.utils.logger import logger_error, logger_info
 from sx_agents.utils import ChatMemory, Model
-from sx_agents.utils.common import crawring_message_from_response
+# from sx_agents.utils.common import crawring_message_from_response
 
 
 def execute(
@@ -39,7 +42,10 @@ def execute(
             messages = memory.prompt_with_all_messages(
                 "user", prompt, vision=model.vision
             )
-            messages = model.reduce_messages(messages)
+            prompts = ChatPromptTemplate.from_messages(messages)
+            llm = model.create_langchain_chat()
+            chain = prompts | llm | StrOutputParser()
+            # messages = model.reduce_messages(messages)
     #
     with placeholder:
         with st.container():
@@ -49,19 +55,21 @@ def execute(
                 with st.chat_message("assistant"):
                     with st.container():
                         try:
+                            # stime = time.time()
+                            # response = model.create_langchain_chat(
+                            #     messages,
+                            #     stream=True,
+                            # )
+                            # full_response = st.write_stream(
+                            #     crawring_message_from_response(response)
+                            # )
+                            # etime = time.time()
                             stime = time.time()
-                            response = model.create_chat(
-                                messages,
-                                stream=True,
-                            )
-                            full_response = st.write_stream(
-                                crawring_message_from_response(response)
-                            )
+                            full_response = st.write_stream(chain.stream({}))
                             etime = time.time()
+
                         except Exception as e:
-                            err_message = (
-                                f"APIとの通信に失敗しました。 Error: {str(e)}"
-                            )
+                            err_message = f"APIとの通信に失敗しました。 Error: {str(e)}"
                             memory.append_error(content=err_message)
                             logger_error(
                                 __name__,
