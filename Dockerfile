@@ -3,7 +3,7 @@
 #-------------------------------------------------------------------------------
 FROM python:3.12-bookworm as builder
 #
-WORKDIR /opt/app
+WORKDIR /opt/app/streamlit
 
 # 必要なパッケージをインストール
 RUN apt-get update \
@@ -70,7 +70,9 @@ USER appuser
 
 ENV PYTHONPATH="/opt:${PYTHONPATH}"
 WORKDIR /opt/app/streamlit
-ENTRYPOINT streamlit run main.py --server.port $PORT --browser.gatherUsageStats false --server.address=0.0.0.0 --server.enableStaticServing=true
+# WORKDIR /opt/app
+ENTRYPOINT ["streamlit", "run", "main.py", "--server.port", "8080", "--server.address", "0.0.0.0", "--server.headless", "true", "--browser.gatherUsageStats", "false", "--server.enableStaticServing", "true"]
+# ENTRYPOINT streamlit run main.py --server.port $PORT --browser.gatherUsageStats false --server.address=0.0.0.0 --server.enableStaticServing=true
 
 #-------------------------------------------------------------------------------
 # develop part
