@@ -3,7 +3,7 @@
 #-------------------------------------------------------------------------------
 FROM python:3.12-bookworm as builder
 #
-WORKDIR /opt/app/streamlit
+WORKDIR /opt/app
 
 # 必要なパッケージをインストール
 RUN apt-get update \
