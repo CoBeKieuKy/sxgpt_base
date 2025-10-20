@@ -3,24 +3,25 @@ import time
 import traceback
 from io import BytesIO
 
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import ChatPromptTemplate
+
 import PIL
 import PIL.Image
 import streamlit as st
-
 from streamlit.delta_generator import DeltaGenerator
 
-from app.streamlit.utils.logger import logger_info, logger_error
+from app.streamlit.utils.logger import logger_error, logger_info
 from app.streamlit.utils.sessions import PluginSession
 from sx_agents.utils import ChatMemory, Model
 from sx_agents.utils.common import (
-    crawring_message_from_response,
     to_normalized_pic,
     to_thumbnail_pic,
 )
 
 type Image = PIL.Image.Image
 
-WHITE_LIST = ["gpt-4o"]
+WHITE_LIST = ["all"]
 
 
 def back_to_home():
@@ -66,9 +67,7 @@ def upload_files(placeholder: DeltaGenerator):
 def preprocessing(placeholder: DeltaGenerator, uploaded_file: BytesIO):
     with placeholder.container():
         with st.chat_message("assistant"):
-            with st.status(
-                "読込んだファイルの前処理を行っています...", expanded=True
-            ):
+            with st.status("読込んだファイルの前処理を行っています...", expanded=True):
                 suffix = os.path.splitext(uploaded_file.name)[-1]
                 filename = uploaded_file.name
                 images_ = PIL.Image.open(uploaded_file)
@@ -129,10 +128,11 @@ def output_streaming(
                     if thumbnail:
                         st.image(thumbnail)
             with st.spinner("プロンプトを準備しています...", show_time=True):
-                messages = memory.prompt_with_all_messages(
-                    "user", prompt, image
-                )
-                messages = model.reduce_messages(messages)
+                messages = memory.prompt_with_all_messages("user", prompt, image)
+                prompts = ChatPromptTemplate.from_messages(messages)
+                llm = model.create_langchain_chat()
+                chain = prompts | llm | StrOutputParser()
+                # messages = model.reduce_messages(messages)
                 if len(messages) < 2:
                     memory.append_warning("プロンプトが長すぎます")
                     st.rerun()
@@ -147,17 +147,16 @@ def output_streaming(
         with placeholder_streaming:
             with st.container():
                 with st.spinner("回答しています..."):
-                    response_chunks = model.create_chat(messages, stream=True)
-                    full_response = st.write_stream(
-                        crawring_message_from_response(response_chunks)
-                    )
+                    # response_chunks = model.create_langchain_chat(messages, stream=True)
+                    # full_response = st.write_stream(
+                    #     crawring_message_from_response(response_chunks)
+                    # )
+                    full_response = st.write_stream(chain.stream({}))
             st.markdown(full_response)
     return full_response
 
 
-def execute(
-    placeholder: DeltaGenerator, memory: ChatMemory, model: Model, **kwargs
-):
+def execute(placeholder: DeltaGenerator, memory: ChatMemory, model: Model, **kwargs):
     session: PictureSession = PictureSession.get()
     if "Session" in kwargs:
         session.update(kwargs["Session"])
@@ -196,9 +195,7 @@ def execute(
                 )
                 etime = time.time()
             except Exception as e:
-                memory.append_error(
-                    f"APIとの通信に失敗しました。 Error: {str(e)}"
-                )
+                memory.append_error(f"APIとの通信に失敗しました。 Error: {str(e)}")
                 logger_error(
                     __name__,
                     prompt=prompt,
